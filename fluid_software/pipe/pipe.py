@@ -1,0 +1,71 @@
+import pandas as pd
+import numpy as np
+import os
+
+PIPE_TABLE_FILENAME = 'pipe_table.csv'
+PIPE_TABLE_PATH = os.path.join(os.getcwd(), PIPE_TABLE_FILENAME)
+
+
+def ensure_pipe_table_exists(filepath):
+    if not os.path.exists(filepath):
+        with open(filepath, 'w') as f:
+            pass  #pipe table will exist don't need to check
+
+def load_pipe_table(filepath):
+    ensure_pipe_table_exists(filepath)
+    
+    if os.path.getsize(filepath) == 0:
+        with open(filepath, 'w') as f:
+            pass
+    df = pd.read_csv(filepath)
+    return df
+
+pipe_df = load_pipe_table(PIPE_TABLE_PATH)
+
+def search_by_nps(df, nps, standard_only=False):
+    result = df[df['NPS'] == nps]
+    if standard_only:
+        
+        result = result[
+            (result['Identification'].isnull() | (result['Identification'] == 'STD'))
+        ]
+    return result
+
+def search_by_schedule(df, schedule, standard_only=False):
+    result = df[df['Schedule'] == schedule]
+    if standard_only:
+        result = result[
+            (result['Identification'].isnull() | (result['Identification'] == 'STD'))
+        ]
+    return result
+
+def search_by_nps_and_schedule(df, nps, schedule, standard_only=False):
+    result = df[(df['NPS'] == nps) & (df['Schedule'] == schedule)]
+    if standard_only:
+        
+        result = result[result['Identification'].isnull() | (result['Identification'].str.upper() == 'STD')]
+    return result
+    def search_by_inside_diameter(df, inside_diameter, tol=0.01, n=None):
+        filtered = df[np.abs(df['Inside Diameter'] - inside_diameter) < tol]
+        sorted_df = filtered.assign(
+            diff=np.abs(filtered['Inside Diameter'] - inside_diameter)
+        ).sort_values('diff').drop(columns='diff')
+        if n is not None:
+            return sorted_df.head(n)
+        return sorted_df
+
+def search_by_area(df, area, tol=0.01):
+    return df[np.abs(df['Area'] - area) < tol]
+
+class Pipe:
+    def __init__(self, nps, schedule, outside_diameter, wall_thickness):
+        self.nps = nps
+        self.schedule = schedule
+        self.outside_diameter = outside_diameter
+        self.wall_thickness = wall_thickness
+        self.inside_diameter = self.outside_diameter - 2 * self.wall_thickness
+        self.area = np.pi * (self.inside_diameter / 2) ** 2
+    def __repr__(self):
+        return (f"<Pipe: NPS={self.nps}, Schedule='{self.schedule}', "
+                f"OD={self.outside_diameter:.3f} in, WT={self.wall_thickness:.3f} in, "
+                f"ID={self.inside_diameter:.3f} in, Area={self.area:.4f} in^2>")

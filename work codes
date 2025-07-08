@@ -1,0 +1,11 @@
+import pandas as pd
+
+# Example DataFrame definition; replace with your actual data as needed
+pipe_df = pd.DataFrame({
+	'NPS': [1.0, 2.0, 3.0, 4.0],
+	'Value': ['A', 'B', 'C', 'D']
+})
+
+nps_input = float(input("Enter the NPS value to look up: "))
+result = pipe_df[pipe_df['NPS'] == nps_input]
+print(result)
