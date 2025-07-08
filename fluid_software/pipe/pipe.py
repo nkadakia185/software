@@ -8,14 +8,14 @@ PIPE_TABLE_PATH = os.path.join(os.getcwd(), PIPE_TABLE_FILENAME)
 
 def ensure_pipe_table_exists(filepath):
     if not os.path.exists(filepath):
-        with open(filepath, 'w') as f:
-            pass  #pipe table will exist don't need to check
+        with open(filepath, 'w'):
+            pass
 
 def load_pipe_table(filepath):
     ensure_pipe_table_exists(filepath)
     
     if os.path.getsize(filepath) == 0:
-        with open(filepath, 'w') as f:
+        with open(filepath, 'w'):
             pass
     df = pd.read_csv(filepath)
     return df
@@ -42,20 +42,29 @@ def search_by_schedule(df, schedule, standard_only=False):
 def search_by_nps_and_schedule(df, nps, schedule, standard_only=False):
     result = df[(df['NPS'] == nps) & (df['Schedule'] == schedule)]
     if standard_only:
-        
         result = result[result['Identification'].isnull() | (result['Identification'].str.upper() == 'STD')]
     return result
-    def search_by_inside_diameter(df, inside_diameter, tol=0.01, n=None):
-        filtered = df[np.abs(df['Inside Diameter'] - inside_diameter) < tol]
-        sorted_df = filtered.assign(
-            diff=np.abs(filtered['Inside Diameter'] - inside_diameter)
-        ).sort_values('diff').drop(columns='diff')
-        if n is not None:
-            return sorted_df.head(n)
-        return sorted_df
 
-def search_by_area(df, area, tol=0.01):
-    return df[np.abs(df['Area'] - area) < tol]
+def search_by_nps_and_identification(df, nps, identification, standard_only=False):
+    result = df[(df['NPS'] == nps) & (df['Identification'] == identification)]
+    if standard_only:
+        result = result[result['Identification'].isnull() | (result['Identification'].str.upper() == 'STD')]
+    return result
+
+def search_by_inside_diameter(df, inside_diameter, tol=0.01, n=None):
+    sorted_df = df.assign(
+        diff=np.abs(df['Inside Diameter'] - inside_diameter)
+    ).sort_values('diff')
+    if n is not None:
+        sorted_df = sorted_df.head(n)
+    return sorted_df.drop(columns='diff')
+
+def search_by_area(df, area, n=None):
+    df = df.assign(diff=np.abs(df['Area'] - area))
+    sorted_df = df.sort_values('diff')
+    if n is not None:
+        sorted_df = sorted_df.head(n)
+    return sorted_df.drop(columns='diff')
 
 class Pipe:
     def __init__(self, nps, schedule, outside_diameter, wall_thickness):
