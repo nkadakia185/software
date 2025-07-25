@@ -2,25 +2,10 @@ import pandas as pd
 import numpy as np
 import os
 
-PIPE_TABLE_FILENAME = 'pipe_table.csv'
-PIPE_TABLE_PATH = os.path.join(os.getcwd(), PIPE_TABLE_FILENAME)
+PIPE_TABLE_FILENAME = r'fluid_software\pipe\pipe_sizes.csv'
+# PIPE_TABLE_PATH = os.path.join(os.getcwd(), PIPE_TABLE_FILENAME)
 
-
-def ensure_pipe_table_exists(filepath):
-    if not os.path.exists(filepath):
-        with open(filepath, 'w'):
-            pass
-
-def load_pipe_table(filepath):
-    ensure_pipe_table_exists(filepath)
-    
-    if os.path.getsize(filepath) == 0:
-        with open(filepath, 'w'):
-            pass
-    df = pd.read_csv(filepath)
-    return df
-
-pipe_df = load_pipe_table(PIPE_TABLE_PATH)
+PIPE_DF = pd.read_csv(r'pipe\pipe.py')
 
 def search_by_nps(df, nps, standard_only=False):
     result = df[df['NPS'] == nps]
