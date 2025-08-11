@@ -9,6 +9,7 @@ def filter_pipe_by_section_viii(
     seamless: bool = True,
     section_viii: bool = True
 ) -> pd.DataFrame:
+    # for information on ASME 
     """
     Filters pipe sizes based on ASME Section VIII UG-27 required thickness.
 
@@ -32,6 +33,7 @@ def filter_pipe_by_section_viii(
     # Set weld joint efficiency factor E
     E = 1.0 if seamless else 0.85
 
+    #TODO Call asme_allowable_stress to get stress value
     # Get numeric temperature columns
     try:
         temp_cols = [float(col) for col in material_props_df.columns if isinstance(col, (int, float, float))]
