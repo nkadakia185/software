@@ -1,0 +1,4 @@
+fluid_type,temoerature,pressure,mass_flow_rate,,target_velocity
+water,120,10,5,,2.5
+steam ,200,15,3,,30
+oil,60,5,2.5,,1.8
