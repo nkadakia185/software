@@ -1,6 +1,7 @@
 import pandas as pd
 
 # Function to load fluid properties from CSV and create variables dynamically
+# Assume we have a "fluid_properties.csv" with columns: fluid_type, temperature, pressure, mass_flow_rate, target_velocity
 def load_fluid_properties(csv_path):
     df = pd.read_csv(csv_path)
     fluid_vars = {}
